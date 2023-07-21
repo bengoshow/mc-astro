@@ -4,9 +4,17 @@ import Card from '../components/Card.astro';
 
 import { requestOptions } from '../request-options';
 
+interface List {
+  name: string;
+  id: string;
+  stats: {
+    member_count: number;
+  };
+}
+
 const res = await fetch(`${import.meta.env.MAILCHIMP_API_ENDPOINT}/lists`, requestOptions);
 const resJson = await res.json().catch((error) => console.log('error', error));
-const lists = resJson.lists.map((list) => {
+const lists = resJson.lists.map((list: List) => {
   const name = list.name,
     id = list.id,
     stats = list.stats;
@@ -25,7 +33,7 @@ const lists = resJson.lists.map((list) => {
     <p class="instructions">Select your Audience to find Interest Groups.</p>
     <ul role="list" class="link-card-grid">
       {
-        lists.map((list) => (
+        lists.map((list: List) => (
           <Card href={`/list/${list.id}`} title={list.name} body={`${list.stats.member_count} Members`} />
         ))
       }

@@ -5,6 +5,11 @@ import Card from '../../components/Card.astro';
 import { requestOptions } from '../../request-options';
 const { list_id } = Astro.params;
 
+interface Category {
+  title: string;
+  id: string;
+}
+
 const listRes = await fetch(`${import.meta.env.MAILCHIMP_API_ENDPOINT}/lists/${list_id}`, requestOptions);
 const listResJson = await listRes.json().catch((error) => console.log('error', error));
 const list_name = listResJson.name;
@@ -14,7 +19,7 @@ const res = await fetch(
   requestOptions
 );
 const resJson = await res.json().catch((error) => console.log('error', error));
-const categories = resJson.categories.map((category) => {
+const categories = resJson.categories.map((category: Category) => {
   const title = category.title;
   const id = category.id;
   return {
@@ -30,8 +35,8 @@ const categories = resJson.categories.map((category) => {
     <p class="instructions">Select your Interest Category to find Interest Groups.</p>
     <ul role="list" class="link-card-grid">
       {
-        categories.map((category) => (
-          <Card href={`/list/${list_id}/interests/${category.id}`} title={category.title} body={category.description} />
+        categories.map((category: Category) => (
+          <Card href={`/list/${list_id}/interests/${category.id}`} title={category.title} />
         ))
       }
     </ul>
