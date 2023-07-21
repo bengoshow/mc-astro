@@ -1,0 +1,8 @@
+---
+import { requestOptions } from "../request-options";
+
+const response = await fetch(`${import.meta.env.MAILCHIMP_API_ENDPOINT}/ping`, requestOptions);
+const data = await response.json().catch(error => console.log('error', error));
+const result = data.health_status;
+---
+{result}

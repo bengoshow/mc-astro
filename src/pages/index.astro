@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+
+import { requestOptions } from '../request-options';
+
+const res = await fetch(`${import.meta.env.MAILCHIMP_API_ENDPOINT}/lists`, requestOptions);
+const resJson = await res.json().catch((error) => console.log('error', error));
+const lists = resJson.lists.map((list) => {
+  const name = list.name,
+    id = list.id,
+    stats = list.stats;
+
+  return {
+    name,
+    id,
+    stats,
+  };
+});
+---
+
+<Layout title="MC Fetch">
+  <main>
+    <h1>🎤 <span class="text-gradient">MC Fetch</span></h1>
+    <p class="instructions">Select your Audience to find Interest Groups.</p>
+    <ul role="list" class="link-card-grid">
+      {
+        lists.map((list) => (
+          <Card href={`/list/${list.id}`} title={list.name} body={`${list.stats.member_count} Members`} />
+        ))
+      }
+    </ul>
+  </main>
+</Layout>

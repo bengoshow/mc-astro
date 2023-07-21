@@ -1,0 +1,40 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import Card from '../../../../components/Card.astro';
+
+import { requestOptions } from '../../../../request-options';
+
+const { list_id, category_id } = Astro.params;
+
+const ctgyRes = await fetch(
+  `${import.meta.env.MAILCHIMP_API_ENDPOINT}/lists/${list_id}/interest-categories/${category_id}`,
+  requestOptions
+);
+const ctgyResJson = await ctgyRes.json().catch((error) => console.log('error', error));
+const category_name = ctgyResJson.title;
+
+const res = await fetch(
+  `${import.meta.env.MAILCHIMP_API_ENDPOINT}/lists/${list_id}/interest-categories/${category_id}/interests?count=100`,
+  requestOptions
+);
+const resJson = await res.json().catch((error) => console.log('error', error));
+
+const interests = resJson.interests.map((interest) => {
+  const name = interest.name;
+  const id = interest.id;
+  return {
+    name,
+    id,
+  };
+});
+---
+
+<Layout title="MC Fetch">
+  <main>
+    <h1><span class="text-gradient">{category_name}</span></h1>
+    <p class="instructions">Select Interest Group ID below.</p>
+    <ul role="list" class="link-card-grid">
+      {interests.map((interest) => <Card title={interest.name} body={interest.id} />)}
+    </ul>
+  </main>
+</Layout>
